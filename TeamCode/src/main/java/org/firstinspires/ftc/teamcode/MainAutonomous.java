@@ -111,12 +111,15 @@ public class MainAutonomous extends LinearOpMode {
         }
 
         while (opModeIsActive()) {
-
+/*
             RobotDescend(1,4,10);
             sleep(100);
             RobotDescend(-1,1,10);
             encoderDriveStraight(0.2,1,10);
             RobotDescend(1,-3,10);
+  */
+            encoderDriveStraight(1,10,5);
+            encoderDriveRotate(1,90,5);
 
 
             if (TeamBlueSwitchRead)  {
