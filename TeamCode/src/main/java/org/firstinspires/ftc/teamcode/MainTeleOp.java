@@ -33,8 +33,6 @@ public class MainTeleOp extends OpMode
     private Servo ServoRobotLifter = null;
 
     private Servo MineralVac = null; //Continuous rotation servo for Mineral Collection
-    private Servo MineralVacWrist = null; //Servo for Mineral Collector "Wrist"
-
 
     private DeviceInterfaceModule DeviceIM;
     private GyroSensor Gyro = null; // Das ist die Gyro
@@ -44,11 +42,10 @@ public class MainTeleOp extends OpMode
 
     //These outline the starting positions of all of the servos, as well as the range they're allowed to work in.
     //This is in degrees.
-    private static double CRServoStop = .5  ; //Should be the stop position of the servos
-    private double servoRobotLifterPosition = CRServoStop;
-    private double servoMineralVacPosition = CRServoStop;
-    private double servoMineralVacWristPosition = 0;
-    private double servoMineralVacBucketPosition = 0;
+    private static double RobotLifterCRServoStop = .5; //Should be the stop position of the RobotLifterServoservo
+    private static double MineralVacCRServoStop = .45;
+    private double servoRobotLifterPosition = RobotLifterCRServoStop;
+    private double servoMineralVacPosition = MineralVacCRServoStop;
 
     private final static double servoMinRange  = 1;
     private final static double servoMaxRange  = 180;
@@ -90,8 +87,6 @@ public class MainTeleOp extends OpMode
 
         //Init MineralVacServos
         MineralVac = hardwareMap.get(Servo.class, "MineralVac");
-        MineralVacWrist = hardwareMap.get(Servo.class, "MineralVacWrist");
-
 
         //Init Misc Devices
 
@@ -128,7 +123,7 @@ public class MainTeleOp extends OpMode
     public void loop() {
         //Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
 
-        // Setup a variable for each drive wheel and servos to save power level for telemetry.
+        // Setup a variable for each drive wheel and servos to save position for telemetry.
         double MotorMineralArmPitchPos = MotorMineralArmPitch.getCurrentPosition();
         double MotorMineralArmExtensionPos = MotorMineralArmExtension.getCurrentPosition();
 
@@ -164,7 +159,7 @@ public class MainTeleOp extends OpMode
         if (gamepad2.dpad_up) {
             if (RobotLifterUp) {
                 motorRobotLifterPower = 0;
-                servoRobotLifterPosition = CRServoStop;
+                servoRobotLifterPosition = RobotLifterCRServoStop;
                 RobotLifterUp = false;
                 RobotLifterDown = false; //Reset for safety
             } else {
@@ -178,7 +173,7 @@ public class MainTeleOp extends OpMode
         if (gamepad2.dpad_down) {
             if (RobotLifterDown) {
                 motorRobotLifterPower = 0;
-                servoRobotLifterPosition = CRServoStop;
+                servoRobotLifterPosition = RobotLifterCRServoStop;
                 RobotLifterDown = false;
                 RobotLifterUp = false; //Reset for safety
             } else {
@@ -216,7 +211,7 @@ public class MainTeleOp extends OpMode
 
         if (gamepad2.a) {
             if (MineralVacForward) {
-                servoMineralVacPosition = CRServoStop;
+                servoMineralVacPosition = MineralVacCRServoStop;
                 MineralVacForward = false;
                 MineralVacBackwards = false; //Reset for safety
             } else {
@@ -226,7 +221,7 @@ public class MainTeleOp extends OpMode
         }
         if (gamepad2.b) {
             if (MineralVacBackwards) {
-                servoMineralVacPosition = CRServoStop;
+                servoMineralVacPosition = MineralVacCRServoStop;
                 MineralVacBackwards = false;
                 MineralVacForward = false; //Reset for safety
             }
@@ -244,11 +239,8 @@ public class MainTeleOp extends OpMode
 
         // Set Servo positions to variable "servoPosition"(s)
 
-        servoMineralVacWristPosition = Range.clip(servoMineralVacWristPosition, servoMinRange, servoMaxRange); //Clips servo range into usable area. Protects from over extension.
-        MineralVacWrist.setPosition(servoMineralVacWristPosition / 180); //This converts from degrees into 0-1 automagically.
-
         ServoRobotLifter.setPosition(servoRobotLifterPosition);
-        MineralVac.setPosition(servoMineralVacPosition); //Why hello Jeffery! I have taken over your code! I will rule them all! Mwah ha ha!!
+        MineralVac.setPosition(servoMineralVacPosition);
 
         // Send calculated power to wheels
         DriveLeftFront.setPower(v1 * motorSpeedMultiplier);
@@ -257,7 +249,7 @@ public class MainTeleOp extends OpMode
         DriveRightRear.setPower(v4 * motorSpeedMultiplier);
 
         // Set Auxiliary Motor Powers
-        MotorMineralArmPitch.setPower(v5);
+        MotorMineralArmPitch.setPower(v5 * .5);
         MotorMineralArmExtension.setPower(v6);
         MotorRobotLifter.setPower(motorRobotLifterPower);
 
