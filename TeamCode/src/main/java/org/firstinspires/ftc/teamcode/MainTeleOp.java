@@ -51,6 +51,7 @@ public class MainTeleOp extends OpMode
     private final static double servoMaxRange  = 180;
 
     private double motorSpeedMultiplier = .2;
+    private double AmotorSpeedMultiplier = .15;
     private String consoleOut = "Nothing Yet";
 
     @Override
@@ -155,6 +156,16 @@ public class MainTeleOp extends OpMode
 
         double v5 = -gamepad2.left_stick_y * 0.6; //MotorMineralArmPitch
         double v6 = -gamepad2.right_stick_y; //MotorMineralArmExtension
+
+        if (gamepad2.left_trigger < 0.1) {
+            AmotorSpeedMultiplier = .15;
+            DeviceIM.setLED(2,false);
+        }
+
+        if (gamepad2.left_trigger >= 0.1) {
+            AmotorSpeedMultiplier = 1;
+            DeviceIM.setLED(2,true);
+        }
 
         if (gamepad2.dpad_up) {
             if (RobotLifterUp) {
