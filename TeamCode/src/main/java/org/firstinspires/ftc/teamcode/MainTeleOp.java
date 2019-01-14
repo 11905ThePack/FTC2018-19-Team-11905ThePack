@@ -249,7 +249,7 @@ public class MainTeleOp extends OpMode
         DriveRightRear.setPower(v4 * motorSpeedMultiplier);
 
         // Set Auxiliary Motor Powers
-        MotorMineralArmPitch.setPower(v5 * .5);
+        MotorMineralArmPitch.setPower(v5 * .15);
         MotorMineralArmExtension.setPower(v6);
         MotorRobotLifter.setPower(motorRobotLifterPower);
 
