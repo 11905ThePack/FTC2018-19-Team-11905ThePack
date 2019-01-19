@@ -260,7 +260,7 @@ public class MainTeleOp extends OpMode
         double DriveRightFrontPos = DriveRightFront.getCurrentPosition();
         double DriveLeftRearPos = DriveLeftRear.getCurrentPosition();
         double DriveRightRearPos = DriveRightRear.getCurrentPosition();
-        double MineralArmPitchPos = MotorRobotLifter.getCurrentPosition();
+        double MineralArmPitchPos = MotorMineralArmPitch.getCurrentPosition();
 
         //        int GyroPos = Gyro.getHeading();
 
