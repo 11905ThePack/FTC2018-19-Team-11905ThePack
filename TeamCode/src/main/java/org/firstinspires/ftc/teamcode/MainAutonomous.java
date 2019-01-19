@@ -31,9 +31,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
+//import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.GyroSensor;
+//import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -61,16 +61,24 @@ public class MainAutonomous extends LinearOpMode {
     DcMotor MotorRobotLifter;
 
     //Servos
+    Servo ServoRobotLifter;
 
     //Colour Sensors
 
     //Gyros
 
+    //Servo Stuff
+    private static double RobotLifterCRServoStop = .5;
+    private double servoRobotLifterPosition = RobotLifterCRServoStop;
+
+    private final static double servoMinRange  = 1;
+    private final static double servoMaxRange  = 180;
+
     //Encoder Constants
-    static final double COUNTS_PER_MOTOR_REV = 28;
-    static final double DRIVE_GEAR_REDUCTION = 20.0;
-    static final double WHEEL_DIAMETER_INCHES = 4.0;
-    static final double COUNTS_PER_INCH =
+    private static final double COUNTS_PER_MOTOR_REV = 28;
+    private static final double DRIVE_GEAR_REDUCTION = 20.0;
+    private static final double WHEEL_DIAMETER_INCHES = 4.0;
+    private static final double COUNTS_PER_INCH =
             (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                     (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double COUNTS_PER_DEGREE =
@@ -97,6 +105,7 @@ public class MainAutonomous extends LinearOpMode {
         DriveRightRear = hardwareMap.get(DcMotor.class, "DriveRightRear");
 
          MotorRobotLifter = hardwareMap.get(DcMotor.class,"RobotLifter");
+        ServoRobotLifter = hardwareMap.get(Servo.class,"ServoRobotLifter");
 
         telemetry.update();
 
