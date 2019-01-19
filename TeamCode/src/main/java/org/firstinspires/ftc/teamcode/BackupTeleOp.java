@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import static android.os.SystemClock.sleep;
 
-@TeleOp(name="MainTeleOp", group="Drive-Type OpModes")
+@TeleOp(name="Backup  MainTeleOp", group="Drive-Type OpModes")
 
 public class BackupTeleOp extends OpMode
 {
