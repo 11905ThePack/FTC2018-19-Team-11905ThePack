@@ -273,8 +273,8 @@ public class MainTeleOp extends OpMode
 
 //        telemetry.addData("FrontMotors", "Left: " + DriveLeftFrontPos);
 //        telemetry.addData("FrontMotors", "Right: " + DriveRightFrontPos);
-//        telemetry.addData("RearMotors", "Left: "+ DriveLeftRearPos);
-//        telemetry.addData("RearMotors", "Right: " + DriveRightRearPos);
+       telemetry.addData("RearMotors", "Left: "+ DriveLeftRearPos);
+       telemetry.addData("RearMotors", "Right: " + DriveRightRearPos);
 
 //        telemetry.addData("GyroPos:", GyroPos);
 //        telemetry.addData( "Motor Speed","%.2f", motorSpeedMultiplier);
