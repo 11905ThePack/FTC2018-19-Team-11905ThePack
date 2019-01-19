@@ -138,8 +138,6 @@ public class MainTeleOp extends OpMode
     public void loop() {
         //Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
 
-        telemetry.addData("Debug","looping");
-
         // Setup a variable for each drive wheel and servos to save position for telemetry.
         double MotorMineralArmPitchPos = MotorMineralArmPitch.getCurrentPosition();
         double MotorMineralArmExtensionPos = MotorMineralArmExtension.getCurrentPosition();
@@ -273,13 +271,14 @@ public class MainTeleOp extends OpMode
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Running, Run Time: " + runtime.toString());
 
-        telemetry.addData("FrontMotors", "Left: " + DriveLeftFrontPos);
-        telemetry.addData("FrontMotors", "Right: " + DriveRightFrontPos);
-        telemetry.addData("RearMotors", "Left: "+ DriveLeftRearPos);
-        telemetry.addData("RearMotors", "Right: " + DriveRightRearPos);
+//        telemetry.addData("FrontMotors", "Left: " + DriveLeftFrontPos);
+//        telemetry.addData("FrontMotors", "Right: " + DriveRightFrontPos);
+//        telemetry.addData("RearMotors", "Left: "+ DriveLeftRearPos);
+//        telemetry.addData("RearMotors", "Right: " + DriveRightRearPos);
 
 //        telemetry.addData("GyroPos:", GyroPos);
-        telemetry.addData( "Motor Speed","%.2f", motorSpeedMultiplier);
+//        telemetry.addData( "Motor Speed","%.2f", motorSpeedMultiplier);
+        telemetry.addData("MotorMineralArmPitchPos", MotorMineralArmPitchPos);
         telemetry.addData( "Console Out", consoleOut);
         //sleep(20); //This should make the toggle controls not rapidly toggle while pressing the button
     }
