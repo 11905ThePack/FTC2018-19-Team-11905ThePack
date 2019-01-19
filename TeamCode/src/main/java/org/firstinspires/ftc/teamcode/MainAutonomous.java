@@ -26,6 +26,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -57,7 +58,7 @@ public class MainAutonomous extends LinearOpMode {
     DcMotor DriveRightFront;
     DcMotor DriveRightRear;
 
-    DcMotor RobotLifter;
+    DcMotor MotorRobotLifter;
 
     //Servos
 
@@ -95,7 +96,7 @@ public class MainAutonomous extends LinearOpMode {
         DriveRightFront = hardwareMap.get(DcMotor.class, "DriveRightFront");
         DriveRightRear = hardwareMap.get(DcMotor.class, "DriveRightRear");
 
-        RobotLifter = hardwareMap.get(DcMotor.class,"RobotLifter");
+        MotorRobotLifter = hardwareMap.get(DcMotor.class,"RobotLifter");
 
         telemetry.update();
 
@@ -111,13 +112,15 @@ public class MainAutonomous extends LinearOpMode {
         }
 
         while (opModeIsActive()) {
-/*
+
             RobotDescend(1,4,10);
             sleep(100);
             RobotDescend(-1,1,10);
             encoderDriveStraight(0.2,1,10);
             RobotDescend(1,-3,10);
-  */
+
+
+
             encoderDriveStraight(1,10,5);
             encoderDriveRotate(1,90,5);
 
@@ -410,31 +413,31 @@ public class MainAutonomous extends LinearOpMode {
 
         if (opModeIsActive() && (total_eTime.time() < 29)) {
 
-            RobotLifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            MotorRobotLifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             newDescendTarget = (int) (inches * COUNTS_PER_INCH);
 
-            RobotLifter.setTargetPosition(newDescendTarget);
+            MotorRobotLifter.setTargetPosition(newDescendTarget);
 
-            RobotLifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            MotorRobotLifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             runtime.reset();
 
-            RobotLifter.setPower(speed);
+            MotorRobotLifter.setPower(speed);
 
 
 
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    (RobotLifter.isBusy())
+                    (MotorRobotLifter.isBusy())
                     && (total_eTime.time() < 29)) {
             }
 
             runtime.reset();
 
-            RobotLifter.setPower(0);
+            MotorRobotLifter.setPower(0);
 
-            RobotLifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            MotorRobotLifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         }
     }
