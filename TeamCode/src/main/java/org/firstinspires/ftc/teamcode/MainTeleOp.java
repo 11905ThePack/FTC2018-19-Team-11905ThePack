@@ -282,7 +282,7 @@ public class MainTeleOp extends OpMode
         telemetry.addData( "Console Out", consoleOut);
         telemetry.addData("Path2", "Running at %7d",
                 MotorMineralArmPitch.getCurrentPosition(),
-        telemetry.update();
+        telemetry.update());
         //sleep(20); //This should make the toggle controls not rapidly toggle while pressing the button
     }
 
