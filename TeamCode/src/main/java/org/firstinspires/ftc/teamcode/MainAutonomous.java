@@ -96,7 +96,7 @@ public class MainAutonomous extends LinearOpMode {
         DriveRightFront = hardwareMap.get(DcMotor.class, "DriveRightFront");
         DriveRightRear = hardwareMap.get(DcMotor.class, "DriveRightRear");
 
-        MotorRobotLifter = hardwareMap.get(DcMotor.class,"RobotLifter");
+         MotorRobotLifter = hardwareMap.get(DcMotor.class,"RobotLifter");
 
         telemetry.update();
 
