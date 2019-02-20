@@ -1,3 +1,4 @@
+// this was "TestTeleOp.java" until Feb 6 2019 when Ken and Saira scooped it out and dumped it here
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -10,14 +11,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import static android.os.SystemClock.sleep;
+@TeleOp(name="TestTeleOp", group="Drive-Type OpModes")
 
-@TeleOp(name="MainTeleOp", group="Drive-Type OpModes")
-
-public class MainTeleOp extends OpMode
+public class TeleOp2 extends OpMode
 {
     // Declare OpMode variables for use.
-    //All servo variables are in DEGREES.[LIES!!!!!!!!!!!!!!!!!]{vell, not anymore, bfut still.}
+    //All servo variables are in DEGREES.
     //As a general rule, use uppercase first letters for hardware mapping,
     //and use lowercase first letters for variables.
     private ElapsedTime runtime = new ElapsedTime(); //We don't really need an elapsed time telemetry, but here it is.
@@ -26,43 +25,76 @@ public class MainTeleOp extends OpMode
     private DcMotor DriveLeftRear = null; //Left Rear Motor
     private DcMotor DriveRightRear = null; //Right Rear Motor
 
-    private DcMotor MotorMineralArmExtension = null;
+
+
+    //encoderDrive constants
+    static final double COUNTS_PER_MOTOR_REV = 28;
+    static final double DRIVE_GEAR_REDUCTION = 20.0;
+    static final double WHEEL_DIAMETER_INCHES = 4.0;
+    static final double COUNTS_PER_INCH =
+            (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+                    (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double COUNTS_PER_DEGREE =
+            (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) * 1/6;
+
     private DcMotor MotorMineralArmPitch = null;
+    //private DcMotor MotorMineralArmExtension = null;
 
-    private DcMotor MotorRobotLifter = null;
-    private Servo ServoRobotLifter = null;
-//    Collection
+    private Servo MineralVac = null; //Continuous rotation servo for Mineral Collection
+    private Servo MineralVacWrist = null; //Servo for Mineral Collector "Wrist"
 
-    private Servo MineralVac = null; //Continuous rotation servo for Mineral
-    private Servo MineralGate = null;
 
     private DeviceInterfaceModule DeviceIM;
     private GyroSensor Gyro = null; // Das ist die Gyro
 
-    // Init some other variables
-     private double motorRobotLifterPower = 0;
-
     //These outline the starting positions of all of the servos, as well as the range they're allowed to work in.
     //This is in degrees.
-    private static double RobotLifterCRServoStop = .5; //Should be the stop position of the RobotLifterServoservo
-    private static double MineralVacCRServoStop = .52;
-    private double servoRobotLifterPosition = RobotLifterCRServoStop;
-    private double servoMineralVacPosition = MineralVacCRServoStop;
-
+    private double servoMineralVacPosition = 0; //Use .45 for reverse, .5 for stop, and .55 for forwards
+    private double servoMineralVacWristPosition = 0;
+    private double servoMineralVacBucketPosition = 0;
     private final static double servoMinRange  = 1;
     private final static double servoMaxRange  = 180;
-
-    private static double servoMineralGateClosedPosition = 50;  //tested Friday @ 55, trying 50 now.
-    private static double servoMineralGateOpenPosition = 10;
-    private double servoMineralGatePosition = servoMineralGateClosedPosition;
-
     private double motorSpeedMultiplier = .2;
-    private double AmotorSpeedMultiplier = .15;
     private String consoleOut = "Nothing Yet";
 
     @Override
     public void init() {
         // Code to run ONCE when the driver hits INIT
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //This is a comment
 
         telemetry.addData("Status", "Initialized");
 
@@ -82,21 +114,18 @@ public class MainTeleOp extends OpMode
         MotorMineralArmPitch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Init MotorMineralArmExtension
-        MotorMineralArmExtension = hardwareMap.get(DcMotor.class, "MotorMineralArmExtension");
-        MotorMineralArmExtension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        MotorMineralArmExtension.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //MotorMineralArmExtension = hardwareMap.get(DcMotor.class, "MotorMineralArmExtension");
+        //MotorGlyphGrabber.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //MotorGlyphGrabber.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Init MotorRobotLifter
-        MotorRobotLifter = hardwareMap.get(DcMotor.class, "MotorRobotLifter");
-        MotorRobotLifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        MotorRobotLifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        ServoRobotLifter = hardwareMap.get(Servo.class,"ServoRobotLifter");
+        //MotorRobotLifter = hardwareMap.get(DcMotor.class, "MotorRobotLifter");
+        //MotorRobotLifter.setmode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //MotorRobotLifter
 
         //Init MineralVacServos
         MineralVac = hardwareMap.get(Servo.class, "MineralVac");
-
-        MineralGate = hardwareMap.get(Servo.class, "MineralGate");
-
+        MineralVacWrist = hardwareMap.get(Servo.class, "MineralVacWrist");
 
 
         //Init Misc Devices
@@ -112,7 +141,7 @@ public class MainTeleOp extends OpMode
     @Override
     public void init_loop() {
         //Code loops once you hit init
-        telemetry.addData("Status:", "Armed by Saira");
+        telemetry.addData("Status:", "Armed");
 
     }
 
@@ -122,25 +151,19 @@ public class MainTeleOp extends OpMode
         //Code to run ONCE when the driver hits PLAY
         runtime.reset();
         Gyro.calibrate();
-
-        MineralGate.setPosition(servoMineralGatePosition/180);  //close gate on startup, to release noodles
-
-        telemetry.addData("Debug","Started");
     }
 
     private boolean UseServoStick = true;
     private boolean DriveMode = false; //Currently Unused, set for 2 drive modes
-    private boolean MineralVacForward = false;
-    private boolean MineralVacBackwards = false;
-    private boolean RobotLifterUp = false;
-    private boolean RobotLifterDown = false;
     @Override
     public void loop() {
         //Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
 
-        // Setup a variable for each drive wheel and servos to save position for telemetry.
-        double MotorMineralArmPitchPos = MotorMineralArmPitch.getCurrentPosition();
-        double MotorMineralArmExtensionPos = MotorMineralArmExtension.getCurrentPosition();
+        // Setup a variable for each drive wheel and servos to save power level for telemetry.
+        //double RelicGrabberExtensionPos = MotorRelicExtension.getCurrentPosition();
+        //double MotorGlyphGrabberPos = MotorGlyphGrabber.getCurrentPosition();
+
+        // Init some local variables.
 
         //Gamepad 1 Controls
         // Original POV Mode written by dmssargent, sourced from the FTC Forum. Modified for use with our robot.
@@ -155,44 +178,30 @@ public class MainTeleOp extends OpMode
 
 
 
-        //Controller One
+
         if (gamepad1.right_trigger < 0.1) {
             motorSpeedMultiplier = .2;
-            //DeviceIM.setLED(1, false);
+            DeviceIM.setLED(1, false);
         }
 
         if (gamepad1.right_trigger >= 0.1) {
-            motorSpeedMultiplier = .55; //RETURN TO .55 ASAP
-            //DeviceIM.setLED(1, true);
+            motorSpeedMultiplier = 1.00; //RETURN TO .55 ASAP
+            DeviceIM.setLED(1, true);
         }
 
-        //Controller Two
+        //Gamepad 2 Controls
 
-        double v5 = -gamepad2.left_stick_y * 0.02; //MotorMineralArmPitch
-        double v6 = -gamepad2.right_stick_y; //MotorMineralArmExtension
+        double v5 = -gamepad2.left_stick_y * 0.6;
 
-        if (gamepad2.left_trigger < 0.1) {
-            AmotorSpeedMultiplier = .15;
-            //DeviceIM.setLED(2,false);
+        if (gamepad2.dpad_up) {
+
         }
 
-        if (gamepad2.left_trigger >= 0.1) {
-            AmotorSpeedMultiplier = 1;
-            //DeviceIM.setLED(2,true);
+        if (gamepad2.dpad_down) {
+
         }
 
-        if (gamepad2.dpad_up) {  //winch up
-            motorRobotLifterPower = 1;
-            servoRobotLifterPosition = 1;
-        } else if (gamepad2.dpad_down) {   //winch down
-            motorRobotLifterPower = -1;
-            servoRobotLifterPosition = 0;
-        } else {   //winch off
-            motorRobotLifterPower = 0;
-            servoRobotLifterPosition = RobotLifterCRServoStop;
-        }
-
-/*        if (gamepad2.dpad_left) {
+        if (gamepad2.dpad_left) {
 
         }
 
@@ -205,8 +214,10 @@ public class MainTeleOp extends OpMode
                 consoleOut = "Set Drive Mode to Mode 2";
             }
         }
-*/
+
+        //Toggle the Right Stick controlling the glyph grabber servos.
         if (gamepad2.right_stick_button) {
+
         }
 
         if (gamepad2.left_bumper) {
@@ -217,52 +228,46 @@ public class MainTeleOp extends OpMode
 
         }
 
-        if (gamepad2.a) {  //rotate forward
-                servoMineralVacPosition = .72;
-        } else if(gamepad2.b) {  //rotate backwards
-                servoMineralVacPosition = .32;
-        } else {
-                servoMineralVacPosition = MineralVacCRServoStop;
+        if (gamepad2.a) {
+            servoMineralVacPosition = 1;
         }
 
-
-        if (gamepad2.x) {  //open the gate
-            servoMineralGatePosition = servoMineralGateOpenPosition ;
+        if (gamepad2.b) {
+            servoMineralVacPosition = .5;
         }
 
-        if (gamepad2.y) {  //close the gate
-            servoMineralGatePosition = servoMineralGateClosedPosition;
+        if (gamepad2.x) {
+
         }
 
-        servoMineralGatePosition = Range.clip(servoMineralGatePosition, 0, 90); //Clips servo range into usable area. Protects from over extension.
-        MineralGate.setPosition(servoMineralGatePosition / 180); //This converts from degrees into 0-1 automagically.
+        if (gamepad2.y) {
 
+        }
+
+        if (gamepad1.a) {
+            encoderDrive(1,2);
+        }
 
         // Set Servo positions to variable "servoPosition"(s)
-
-        ServoRobotLifter.setPosition(servoRobotLifterPosition);
+        servoMineralVacPosition = Range.clip(servoMineralVacPosition, 0, 180);
         MineralVac.setPosition(servoMineralVacPosition);
 
+        servoMineralVacWristPosition = Range.clip(servoMineralVacWristPosition, servoMinRange, servoMaxRange); //Clips servo range into usable area. Protects from over extension.
+        MineralVacWrist.setPosition(servoMineralVacWristPosition / 180); //This converts from degrees into 0-1 automagically.
 
         // Send calculated power to wheels
         DriveLeftFront.setPower(v1 * motorSpeedMultiplier);
         DriveRightFront.setPower(v2 * motorSpeedMultiplier);
         DriveLeftRear.setPower(v3 * motorSpeedMultiplier);
         DriveRightRear.setPower(v4 * motorSpeedMultiplier);
-
-        // Set Auxiliary Motor Powers
         MotorMineralArmPitch.setPower(v5);
-        MotorMineralArmExtension.setPower(v6);
-        MotorRobotLifter.setPower(motorRobotLifterPower);
 
-        //Read Positions Of Motors + Arm Pitch
+        //Read Positions Of Motors + Gyro
         double DriveLeftFrontPos = DriveLeftFront.getCurrentPosition();
         double DriveRightFrontPos = DriveRightFront.getCurrentPosition();
         double DriveLeftRearPos = DriveLeftRear.getCurrentPosition();
         double DriveRightRearPos = DriveRightRear.getCurrentPosition();
-        double MineralArmPitchPos = MotorMineralArmPitch.getCurrentPosition();
-
-        //        int GyroPos = Gyro.getHeading();
+        int GyroPos = Gyro.getHeading();
 
 
 
@@ -271,21 +276,50 @@ public class MainTeleOp extends OpMode
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Running, Run Time: " + runtime.toString());
 
-//        telemetry.addData("FrontMotors", "Left: " + DriveLeftFrontPos);
-//        telemetry.addData("FrontMotors", "Right: " + DriveRightFrontPos);
-       telemetry.addData("RearMotors", "Left: "+ DriveLeftRearPos);
-       telemetry.addData("RearMotors", "Right: " + DriveRightRearPos);
+        telemetry.addData("FrontMotors", "Left: " + DriveLeftFrontPos);
+        telemetry.addData("FrontMotors", "Right: " + DriveRightFrontPos);
+        telemetry.addData("RearMotors", "Left: "+ DriveLeftRearPos);
+        telemetry.addData("RearMotors", "Right: " + DriveRightRearPos);
 
-//        telemetry.addData("GyroPos:", GyroPos);
-//        telemetry.addData( "Motor Speed","%.2f", motorSpeedMultiplier);
-        telemetry.addData("MotorMineralArmPitchPos", MotorMineralArmPitchPos);
+        telemetry.addData("GyroPos:", GyroPos);
+        telemetry.addData( "Motor Speed","%.2f", motorSpeedMultiplier);
         telemetry.addData( "Console Out", consoleOut);
-        telemetry.addData("Path2", "Running at %7d",
-                MotorMineralArmPitch.getCurrentPosition(),
-        telemetry.update());
-        //sleep(20); //This should make the toggle controls not rapidly toggle while pressing the button
     }
 
+    public void encoderDrive(double speed,
+                             double leftBackInches) {
+        int MineralPitchTarget;
+
+
+        //Ensures OpMode is running
+
+        // Determine new target position, and pass to motor controller
+        MineralPitchTarget = MotorMineralArmPitch.getCurrentPosition() + (int) (leftBackInches * COUNTS_PER_INCH);
+
+        MotorMineralArmPitch.setTargetPosition(MineralPitchTarget);
+
+        // Turn On RUN_TO_POSITION
+        MotorMineralArmPitch.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        telemetry.addData("encoderDriveOut", "encoderDrive starting");
+        telemetry.update();
+
+        // reset the timeout time and start motion.
+        runtime.reset();
+
+        MotorMineralArmPitch.setPower(speed);
+
+        // Stop all motion;
+        runtime.reset();
+        MotorMineralArmPitch.setPower(0);
+
+
+        // Turn off RUN_TO_POSITION
+        MotorMineralArmPitch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+    }
 
     @Override
     public void stop() {
@@ -296,4 +330,3 @@ public class MainTeleOp extends OpMode
     }
 
 }
-//here's a change
