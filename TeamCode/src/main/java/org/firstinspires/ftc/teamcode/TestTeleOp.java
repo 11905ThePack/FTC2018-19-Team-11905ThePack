@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import static android.os.SystemClock.sleep;
 
+@TeleOp(name="TestTeleOp", group="Drive-Type OpModes")
 public class TestTeleOp extends OpMode
 {
     // Declare OpMode variables for use.
@@ -61,7 +63,7 @@ public class TestTeleOp extends OpMode
     @Override
     public void init_loop() {
         //Code loops once you hit init
-        telemetry.addData("Status:", "Armed by in and out burger");
+        telemetry.addData("Status:", "Armed by in and out");
         //       telemetry.update();
     }
 

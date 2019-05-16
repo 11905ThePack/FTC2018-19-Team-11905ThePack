@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="TestTeleOp", group="Drive-Type OpModes")
+@TeleOp(name="TestTeleOp(TeleOp2)", group="Drive-Type OpModes")
 
 public class TeleOp2 extends OpMode
 {

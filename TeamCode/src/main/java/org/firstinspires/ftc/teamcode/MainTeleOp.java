@@ -112,7 +112,7 @@ public class MainTeleOp extends OpMode
     @Override
     public void init_loop() {
         //Code loops once you hit init
-        telemetry.addData("Status:", "Armed by Saira");
+        telemetry.addData("Status:", "Armed by ken");
 
     }
 
