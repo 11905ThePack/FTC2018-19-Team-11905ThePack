@@ -150,7 +150,7 @@ public class MainAutonomous extends LinearOpMode {
             }  else  {  //Red Team
 
                 if (Position1SwitchRead)  { //Red Team Position One
-                    telemetry.addData("ConsoleOut", "Red Team Position One");
+                    telemetry.addData("ConsoleOut", "Position One");
                     telemetry.update();
 
 

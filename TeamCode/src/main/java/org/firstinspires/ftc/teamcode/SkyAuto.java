@@ -39,9 +39,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 
-@Autonomous(name = "MarAuto", group = "First")
+@Autonomous(name = "SkyAuto", group = "First")
 
-public class MarAuto extends LinearOpMode {
+public class SkyAuto extends LinearOpMode {
 
     //Elapsed Time
     ElapsedTime eTime = new ElapsedTime();
@@ -63,7 +63,7 @@ public class MarAuto extends LinearOpMode {
             (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                     (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double COUNTS_PER_DEGREE =
-           (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) * 1.8/90;
+            (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) * 1.8/90;
 
 
     @Override
@@ -81,27 +81,29 @@ public class MarAuto extends LinearOpMode {
 
 
 
-        ;
+
         while (opModeIsActive() ) {   //drive around;
-                Drive(.05, 5);
+            Drive(.1, 4000, 10);
+            Drive(.5, 4000, 5);
         }
 
 
-                telemetry.addData("ConsoleOut", "Finished, Wait for end.");
+        telemetry.addData("ConsoleOut", "Finished, Wait for end.");
         telemetry.update();
 
         while (total_eTime.time() < 30);
 
 
-          //  telemetry.addData("ConsoleOut", "Finished, end.");
+        //  telemetry.addData("ConsoleOut", "Finished, end.");
         //telemetry.update();
 
-        }
+    }
 
 
 
     public void Drive(double speed,
-                             int drivetime) {
+                      int ticks,
+                      int drivetime) {
         ElapsedTime DriveTimer = new ElapsedTime();
         //DriveLeftRear.getCurrentPosition(),
         // DriveLeftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -114,66 +116,64 @@ public class MarAuto extends LinearOpMode {
         DriveMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         DriveMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-      //  DriveMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-      //  DriveMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //  DriveMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //  DriveMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-       // DriveMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        DriveMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         DriveMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        DriveMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        DriveMotorL.setPower(-speed);
-        DriveMotorR.setPower(speed);
+        //DriveMotorL.setPower(-speed);
+        //DriveMotorR.setPower(speed);
 
-        DriveMotorR.setTargetPosition(drivetime*1000);
-        DriveMotorL.setTargetPosition(drivetime*-1000);
+        DriveMotorL.setTargetPosition(-ticks);
+        DriveMotorR.setTargetPosition(ticks);
+
 
 
         DriveMotorL.getTargetPosition();
-        DriveMotorL.getTargetPosition();
-         //speed = - speed;
+        DriveMotorR.getTargetPosition();
+        //speed = - speed;
 
         runtime.reset();
 
-        DriveMotorR.setPower(1.0);
-        DriveMotorL.setPower(1.05);
+        DriveMotorL.setPower(-speed);
+        DriveMotorR.setPower(speed);
+
 
         while (opModeIsActive()
                 && (DriveTimer.seconds() < drivetime)
-                && (DriveMotorL.isBusy() && DriveMotorR.isBusy())
+                && (DriveMotorL.isBusy() || DriveMotorR.isBusy())
                 && (total_eTime.time() < 30)) {
-            telemetry.addData("Path1", "Running at %7d :%7d",
+
+        }
+
+       /*Ensures OpMode is running
+      while (opModeIsActive()&&(DriveTimer.time() < drivetime)) {
+           telemetry.addData("Path2", "Running at %7d :%7d",
+                   DriveMotorL.getCurrentPosition(),
+                   DriveMotorR.getCurrentPosition());
+
+           telemetry.update();
+       }
+          */ // Stop all motion;
+
+        DriveMotorL.setPower(0);
+        DriveMotorR.setPower(0);
+
+        if (opModeIsActive()) {
+            telemetry.addData("ConsoleOut", "stopped.");
+            telemetry.addData("Path1", "Running at L %7d : R %7d",
                     DriveMotorL.getCurrentPosition(),
                     DriveMotorR.getCurrentPosition());
             telemetry.addData("DriveMotorL.isBusy()",DriveMotorL.isBusy());
             telemetry.addData("DriveMotorR.isBusy()",DriveMotorR.isBusy());
-
-            telemetry.update();
+        } else {
+            telemetry.addData("ConsoleOut", "emergency stopped.");
         }
-
-        /*Ensures OpMode is running
-       while (opModeIsActive()&&(DriveTimer.time() < drivetime)) {
-            telemetry.addData("Path2", "Running at %7d :%7d",
-                    DriveMotorL.getCurrentPosition(),
-                    DriveMotorR.getCurrentPosition());
-
-            telemetry.update();
-        }
-           */ // Stop all motion;
-
-            DriveMotorL.setPower(0);
-            DriveMotorR.setPower(0);
-
-            if (opModeIsActive()) {
-               telemetry.addData("ConsoleOut", "stopped.");
-                telemetry.addData("DriveMotorL.isBusy()",DriveMotorL.isBusy());
-                telemetry.addData("DriveMotorR.isBusy()",DriveMotorR.isBusy());
-            } else {
-                telemetry.addData("ConsoleOut", "emergency stopped.");
-            }
         telemetry.update();
         sleep(2000);
-            //Turn off RUN_TO_POSITION
+        //Turn off RUN_TO_POSITION
 
-          //  sleep(2500);   // optional pause after each move
+        //  sleep(2500);   // optional pause after each move
 
 
 
@@ -182,8 +182,8 @@ public class MarAuto extends LinearOpMode {
 
 
     public void DriveRotate(double speed,
-                                   double degrees,
-                                   double timeoutS) {
+                            double degrees,
+                            double timeoutS) {
         int newLeftBackTarget;
         int newRightBackTarget;
         int newLeftFrontTarget;
@@ -200,3 +200,4 @@ public class MarAuto extends LinearOpMode {
 
 
 }
+
