@@ -1,13 +1,3 @@
-package org.firstinspires.ftc.teamcode;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -37,28 +27,59 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+//Import Hardware
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+//Import Elpased Time
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+//Import Sensors
+import com.qualcomm.robotcore.hardware.TouchSensor;
+//import com.qualcomm.robotcore.hardware.ColorSensor;
+//import com.qualcomm.robotcore.hardware.GyroSensor;
 
 @Autonomous(name = "SkyAuto", group = "First")
 
 public class SkyAuto extends LinearOpMode {
 
+    //Team Checker
+    private TouchSensor TeamBlueSwitch;
+    private TouchSensor Position1Switch;
+
     //Elapsed Time
-    ElapsedTime eTime = new ElapsedTime();
-    ElapsedTime eTime2 = new ElapsedTime();
-    ElapsedTime total_eTime = new ElapsedTime();
-    ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime eTime = new ElapsedTime();
+    private ElapsedTime eTime2 = new ElapsedTime();
+    private ElapsedTime total_eTime = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
 
     //Motors
-    DcMotor DriveMotorL;
-    DcMotor DriveMotorR;
+    private DcMotor DriveLeftFront;
+    private DcMotor DriveLeftRear;
+    private DcMotor DriveRightFront;
+    private DcMotor DriveRightRear;
+
+    //Servos
 
     //Colour Sensors
+
+    //Gyros
+
+    //Servo Stuff
+    private static double RobotLifterCRServoStop = .5;
+    private double servoRobotLifterPosition = RobotLifterCRServoStop;
+
+    private final static double servoMinRange  = 1;
+    private final static double servoMaxRange  = 180;
 
     //Encoder Constants
     private static final double COUNTS_PER_MOTOR_REV = 28;
     private static final double DRIVE_GEAR_REDUCTION = 20.0;
-    private static final double WHEEL_DIAMETER_INCHES = 3.5;
+    private static final double WHEEL_DIAMETER_INCHES = 4.0;
     private static final double COUNTS_PER_INCH =
             (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                     (WHEEL_DIAMETER_INCHES * 3.1415);
@@ -69,9 +90,21 @@ public class SkyAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        //Blue Switch
+        TeamBlueSwitch = hardwareMap.get(TouchSensor.class, "TeamBlueSwitch");
+        boolean TeamBlueSwitchRead = TeamBlueSwitch.isPressed();
+
+        //Red Switch
+        Position1Switch = hardwareMap.get(TouchSensor.class, "Position1Switch");
+        boolean Position1SwitchRead = Position1Switch.isPressed();
+
         //Motors
-        DriveMotorL = hardwareMap.get(DcMotor.class, "DriveMotorL");
-        DriveMotorR = hardwareMap.get(DcMotor.class, "DriveMotorR");
+        DriveLeftFront = hardwareMap.get(DcMotor.class, "DriveLeftFront");
+        DriveLeftFront.setDirection(DcMotor.Direction.REVERSE);
+        DriveLeftRear = hardwareMap.get(DcMotor.class, "DriveLeftRear");
+        DriveLeftRear.setDirection(DcMotor.Direction.REVERSE);
+        DriveRightFront = hardwareMap.get(DcMotor.class, "DriveRightFront");
+        DriveRightRear = hardwareMap.get(DcMotor.class, "DriveRightRear");
 
         telemetry.update();
 
@@ -79,111 +112,218 @@ public class SkyAuto extends LinearOpMode {
         waitForStart();
         total_eTime.reset();
 
+        TeamBlueSwitchRead = TeamBlueSwitch.isPressed();
+        Position1SwitchRead = Position1Switch.isPressed();
 
-
-
-        while (opModeIsActive() ) {   //drive around;
-            Drive(.1, 4000, 10);
-            Drive(.5, 4000, 5);
+        eTime2.reset();
+        while (eTime2.time() < 1) {
         }
 
+        while (opModeIsActive()) {
 
-        telemetry.addData("ConsoleOut", "Finished, Wait for end.");
-        telemetry.update();
+            //Instructions for robot go here
 
-        while (total_eTime.time() < 30);
+            if (TeamBlueSwitchRead)  {
+
+                if (Position1SwitchRead)  {  //Blue Team Position One
+                    telemetry.addData("ConsoleOut", "Blue Team Position One");
+                    telemetry.update();
 
 
-        //  telemetry.addData("ConsoleOut", "Finished, end.");
-        //telemetry.update();
+                } else  {    //Blue Team Position Two
+                    telemetry.addData("ConsoleOut", "Blue Team Position Two");
+                    telemetry.update();
 
+
+                }
+            }  else  {  //Red Team
+
+                if (Position1SwitchRead)  { //Red Team Position One
+                    telemetry.addData("ConsoleOut", "Red Team Position One");
+                    telemetry.update();
+
+
+                } else  {   //Red Team Position Two
+                    telemetry.addData("ConsoleOut", "Red Team Position Two");
+                    telemetry.update();
+
+                }
+            }
+
+
+
+            while (total_eTime.time() < 30) {
+                telemetry.addData("ConsoleOut", "Finished, Wait for end.");
+
+            }
+        }
     }
 
 
+    public void encoderDrive(double speed,
+                             double leftBackInches, double rightBackInches, double leftFrontInches, double rightFrontInches,
+                             double timeoutS) {
+        int newLeftBackTarget;
+        int newRightBackTarget;
+        int newLeftFrontTarget;
+        int newRightFrontTarget;
 
-    public void Drive(double speed,
-                      int ticks,
-                      int drivetime) {
-        ElapsedTime DriveTimer = new ElapsedTime();
-        //DriveLeftRear.getCurrentPosition(),
-        // DriveLeftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //DriveLeftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //DriveLeftRear.setTargetPosition(newLeftBackTarget);
-        //DriveLeftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        DriveTimer.reset();
-
-        DriveMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        DriveMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //  DriveMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //  DriveMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        DriveMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        DriveMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //DriveMotorL.setPower(-speed);
-        //DriveMotorR.setPower(speed);
-
-        DriveMotorL.setTargetPosition(-ticks);
-        DriveMotorR.setTargetPosition(ticks);
-
-
-
-        DriveMotorL.getTargetPosition();
-        DriveMotorR.getTargetPosition();
-        //speed = - speed;
-
-        runtime.reset();
-
-        DriveMotorL.setPower(-speed);
-        DriveMotorR.setPower(speed);
-
-
-        while (opModeIsActive()
-                && (DriveTimer.seconds() < drivetime)
-                && (DriveMotorL.isBusy() || DriveMotorR.isBusy())
-                && (total_eTime.time() < 30)) {
-
-        }
-
-       /*Ensures OpMode is running
-      while (opModeIsActive()&&(DriveTimer.time() < drivetime)) {
-           telemetry.addData("Path2", "Running at %7d :%7d",
-                   DriveMotorL.getCurrentPosition(),
-                   DriveMotorR.getCurrentPosition());
-
-           telemetry.update();
-       }
-          */ // Stop all motion;
-
-        DriveMotorL.setPower(0);
-        DriveMotorR.setPower(0);
-
+        //Ensures OpMode is running
         if (opModeIsActive()) {
-            telemetry.addData("ConsoleOut", "stopped.");
-            telemetry.addData("Path1", "Running at L %7d : R %7d",
-                    DriveMotorL.getCurrentPosition(),
-                    DriveMotorR.getCurrentPosition());
-            telemetry.addData("DriveMotorL.isBusy()",DriveMotorL.isBusy());
-            telemetry.addData("DriveMotorR.isBusy()",DriveMotorR.isBusy());
-        } else {
-            telemetry.addData("ConsoleOut", "emergency stopped.");
+
+            // Determine new target position, and pass to motor controller
+            newLeftBackTarget = DriveLeftRear.getCurrentPosition() + (int) (leftBackInches * COUNTS_PER_INCH);
+            newRightBackTarget = DriveRightRear.getCurrentPosition() + (int) (rightBackInches * COUNTS_PER_INCH);
+            newLeftFrontTarget = DriveLeftFront.getCurrentPosition() + (int) (leftFrontInches * COUNTS_PER_INCH);
+            newRightFrontTarget = DriveRightFront.getCurrentPosition() + (int) (rightFrontInches * COUNTS_PER_INCH);
+
+
+            DriveLeftRear.setTargetPosition(newLeftBackTarget);
+            DriveRightRear.setTargetPosition(newRightBackTarget);
+            DriveLeftFront.setTargetPosition(newLeftFrontTarget);
+            DriveRightFront.setTargetPosition(newRightFrontTarget);
+
+            // Turn On RUN_TO_POSITION
+            DriveLeftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            DriveRightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            DriveLeftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            DriveRightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            telemetry.addData("encoderDriveOut", "encoderDrive starting");
+            telemetry.update();
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+
+            DriveLeftRear.setPower(speed * 1.05);
+            DriveRightRear.setPower(speed);
+            DriveLeftFront.setPower(speed * 1.05);
+            DriveRightFront.setPower(speed);
+
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (DriveLeftRear.isBusy() || DriveRightRear.isBusy() || DriveLeftFront.isBusy() || DriveRightFront.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Path1", "Running to %7d :%7d", newLeftBackTarget, newRightBackTarget, newLeftFrontTarget, newRightFrontTarget);
+                telemetry.addData("Path2", "Running at %7d :%7d",
+                        DriveLeftRear.getCurrentPosition(),
+                        DriveRightRear.getCurrentPosition(),
+                        DriveLeftFront.getCurrentPosition(),
+                        DriveRightFront.getCurrentPosition());
+                telemetry.update();
+
+            }
+
+            // Stop all motion;
+            runtime.reset();
+            DriveLeftRear.setPower(0);
+            DriveRightRear.setPower(0);
+            DriveLeftFront.setPower(0);
+            DriveRightFront.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            DriveLeftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            DriveRightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            DriveLeftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            DriveRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            sleep(2500);   // optional pause after each move
+
         }
-        telemetry.update();
-        sleep(2000);
-        //Turn off RUN_TO_POSITION
 
-        //  sleep(2500);   // optional pause after each move
+    }
+
+    public void encoderDriveStraight(double speed,
+                                     double inches,
+                                     double timeoutS) {
+        int newLeftBackTarget;
+        int newRightBackTarget;
+        int newLeftFrontTarget;
+        int newRightFrontTarget;
+
+        boolean rightAhead = false;
+        boolean leftAhead = false;
+
+        //Ensures OpMode is running & not out of time
+        if (opModeIsActive() && (total_eTime.time() < 29)) {
+
+            DriveLeftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            DriveLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            DriveRightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            DriveRightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            newLeftBackTarget = (int) (inches * COUNTS_PER_INCH);
+            newRightBackTarget = (int) (inches * COUNTS_PER_INCH);
+            newLeftFrontTarget = (int) (inches * COUNTS_PER_INCH);
+            newRightFrontTarget = (int) (inches * COUNTS_PER_INCH);
+
+            DriveLeftRear.setTargetPosition(-newLeftBackTarget);
+            DriveRightRear.setTargetPosition(-newRightBackTarget);
+            DriveLeftFront.setTargetPosition(-newLeftFrontTarget);
+            DriveRightFront.setTargetPosition(-newRightFrontTarget);
+            speed = - speed;
+
+            // Turn On RUN_TO_POSITION
+            DriveLeftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            DriveRightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            DriveLeftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            DriveRightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            telemetry.addData("encoderDriveOut", "encoderDriveStraight starting");
+            telemetry.addData("Path1", "Running to %7d :%7d :%7d :%7d", newLeftBackTarget, newRightBackTarget, newLeftFrontTarget, newRightFrontTarget);
+            telemetry.addData("Path2", "Running at %7d :%7d :%7d :%7d",
+                    DriveLeftRear.getCurrentPosition(),
+                    DriveRightRear.getCurrentPosition(),
+                    DriveLeftFront.getCurrentPosition(),
+                    DriveRightFront.getCurrentPosition());
+            telemetry.update();
+//            sleep(2000);   // optional pause after each move
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            DriveLeftRear.setPower(speed * 1.583);
+            DriveRightRear.setPower(speed);
+            DriveLeftFront.setPower(speed * 1.583);
+            DriveRightFront.setPower(speed);
 
 
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (DriveLeftRear.isBusy() || DriveRightRear.isBusy())
+                    && (total_eTime.time() < 29)) {
+
+                // Display it for the driver.
+                telemetry.addData("Path1", "Running to %7d :%7d :%7d :%7d", newLeftBackTarget, newRightBackTarget, newLeftFrontTarget, newRightFrontTarget);
+                telemetry.addData("Path2", "Running at %7d :%7d :%7d :%7d",
+                        DriveLeftRear.getCurrentPosition(),
+                        DriveRightRear.getCurrentPosition(),
+                        DriveLeftFront.getCurrentPosition(),
+                        DriveRightFront.getCurrentPosition());
+                telemetry.update();
+
+            }
+
+            //Stop All Motion;
+            runtime.reset();
+            DriveLeftRear.setPower(0);
+            DriveRightRear.setPower(0);
+            DriveLeftFront.setPower(0);
+            DriveRightFront.setPower(0);
+
+            //Turn off RUN_TO_POSITION
+            DriveLeftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            DriveRightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            DriveLeftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            DriveRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        }
 
     }
 
 
-
-    public void DriveRotate(double speed,
-                            double degrees,
-                            double timeoutS) {
+    public void encoderDriveRotate(double speed,
+                                   double degrees,
+                                   double timeoutS) {
         int newLeftBackTarget;
         int newRightBackTarget;
         int newLeftFrontTarget;
@@ -191,13 +331,75 @@ public class SkyAuto extends LinearOpMode {
 
         if (opModeIsActive() && (total_eTime.time() < 29)) {
 
+            DriveLeftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            DriveLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            DriveRightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            DriveRightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            newLeftBackTarget =  - (int) (degrees * COUNTS_PER_DEGREE);
+            newRightBackTarget =  + (int) (degrees * COUNTS_PER_DEGREE);
+            newLeftFrontTarget = - (int) (degrees * COUNTS_PER_DEGREE);
+            newRightFrontTarget = + (int) (degrees * COUNTS_PER_DEGREE);
+
+            DriveLeftRear.setTargetPosition(newLeftBackTarget);
+            DriveRightRear.setTargetPosition(newRightBackTarget);
+            DriveLeftFront.setTargetPosition(newLeftFrontTarget);
+            DriveRightFront.setTargetPosition(newRightFrontTarget);
+
+            DriveLeftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            DriveRightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            DriveLeftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            DriveRightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            telemetry.addData("encoderDriveOut", "encoderDriveRotate starting");
+            telemetry.addData("Path1", "Running to %7d :%7d :%7d :%7d", newLeftBackTarget, newRightBackTarget, newLeftFrontTarget, newRightFrontTarget);
+            telemetry.addData("Path2", "Running at %7d :%7d :%7d :%7d",
+                    DriveLeftRear.getCurrentPosition(),
+                    DriveRightRear.getCurrentPosition(),
+                    DriveLeftFront.getCurrentPosition(),
+                    DriveRightFront.getCurrentPosition());
+            telemetry.update();
+
+            runtime.reset();
+            if (speed > 0.0) {
+                DriveLeftRear.setPower(-(speed * 1.00));
+                DriveRightRear.setPower(speed * 1.583);
+                DriveLeftFront.setPower(-(speed * 1.00));
+                DriveRightFront.setPower(speed * 1.583);
+            } else {
+                DriveLeftRear.setPower(speed);
+                DriveRightRear.setPower(-(speed * 1.00));
+                DriveLeftFront.setPower(speed);
+                DriveRightFront.setPower(-(speed * 1.00));
+            }
+
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS)
+                    && (DriveLeftRear.isBusy() || DriveRightRear.isBusy())
+                    && (total_eTime.time() < 29)) {
+
+                telemetry.addData("Path1", "Running to %7d :%7d :%7d :%7d", newLeftBackTarget, newRightBackTarget, newLeftFrontTarget, newRightFrontTarget);
+                telemetry.addData("Path2", "Running at %7d :%7d :%7d :%7d",
+                        DriveLeftRear.getCurrentPosition(),
+                        DriveRightRear.getCurrentPosition(),
+                        DriveLeftFront.getCurrentPosition(),
+                        DriveRightFront.getCurrentPosition());
+                telemetry.update();
+
+            }
+
+            runtime.reset();
+            DriveLeftRear.setPower(0);
+            DriveRightRear.setPower(0);
+            DriveLeftFront.setPower(0);
+            DriveRightFront.setPower(0);
+
+            DriveLeftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            DriveRightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            DriveLeftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            DriveRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         }
     }
-
-
-
-
 }
-
