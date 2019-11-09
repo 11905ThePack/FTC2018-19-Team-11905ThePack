@@ -58,9 +58,7 @@ public class OutAuto extends LinearOpMode {
     DcMotor DriveMotor2;
     DcMotor DriveMotor3;
     DcMotor DriveMotor4;
-    DcMotor AimMotor;
-    DcMotor LMotorL;
-    DcMotor LMotorR;
+
 
     // ColorSensor color;
 
@@ -71,14 +69,14 @@ public class OutAuto extends LinearOpMode {
     //Colour Sensors
 
     //Encoder Constants
- /*  private static final double COUNTS_PER_MOTOR_REV = 28;
+   private static final double COUNTS_PER_MOTOR_REV = 28;
    private static final double DRIVE_GEAR_REDUCTION = 20.0;
    private static final double WHEEL_DIAMETER_INCHES = 3.5;
    private static final double COUNTS_PER_INCH =
            (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                    (WHEEL_DIAMETER_INCHES * 3.1415);
    static final double COUNTS_PER_DEGREE =
-          (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) * 1.8/90;*/
+          (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) * 1.8/90;
 
 
     @Override
@@ -91,9 +89,7 @@ public class OutAuto extends LinearOpMode {
         DriveMotor2 = hardwareMap.get(DcMotor.class, "DriveMotor2");
         DriveMotor3 = hardwareMap.get(DcMotor.class, "DriveMotor3");
         DriveMotor4 = hardwareMap.get(DcMotor.class, "DriveMotor4");
-        AimMotor = hardwareMap.get(DcMotor.class, "AimMotor");
-        LMotorL = hardwareMap.get(DcMotor.class, "LMotorL");
-        LMotorR = hardwareMap.get(DcMotor.class, "LMotorR");
+
 
         // color = hardwareMap.colorSensor.get("color_sensor");
 
@@ -111,9 +107,9 @@ public class OutAuto extends LinearOpMode {
         //drive around;
 
             Drive(.2, 3);
-            Translate(.5, 3);
+            Turn(.5, 3);
             Drive(-1, 5);
-            Translate(-1, 3);
+            Turn(-1, 3);
 
 
     }
@@ -188,6 +184,27 @@ public class OutAuto extends LinearOpMode {
         DriveMotor4.setPower(0);
 
     }
+    public void Turn(double speed,   //turning
+                          int drivetime) {
+        ElapsedTime DriveTimer = new ElapsedTime();
+        if( opModeIsActive()) {
+            DriveMotor1.setPower(-speed);
+            DriveMotor2.setPower(-speed);
+            DriveMotor3.setPower(-speed);
+            DriveMotor4.setPower(-speed);
+        }
 
+        while (opModeIsActive() && (DriveTimer.time() < drivetime)) {
+
+
+
+
+        }
+        DriveMotor1.setPower(0);
+        DriveMotor2.setPower(0);
+        DriveMotor3.setPower(0);
+        DriveMotor4.setPower(0);
+
+    }
 }
 

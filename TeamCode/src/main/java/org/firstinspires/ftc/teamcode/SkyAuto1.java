@@ -43,9 +43,9 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 //import com.qualcomm.robotcore.hardware.ColorSensor;
 //import com.qualcomm.robotcore.hardware.GyroSensor;
 
-@Autonomous(name = "SkyAuto", group = "First")
+@Autonomous(name = "SkyAuto1", group = "First")
 
-public class SkyAuto extends LinearOpMode {
+public class SkyAuto1 extends LinearOpMode {
 
     //Team Checker
     private TouchSensor TeamBlueSwitch;
