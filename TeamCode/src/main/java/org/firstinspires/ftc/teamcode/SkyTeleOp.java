@@ -44,7 +44,7 @@ public class SkyTeleOp extends OpMode {
     private double Soft = 0;
 
     private boolean Flipout= false;
-   // saira 1/18 11:24 am
+   // saira 1/18 11:24 am x
 
     @Override
     public void init() {
