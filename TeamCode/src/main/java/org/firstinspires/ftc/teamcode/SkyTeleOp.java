@@ -21,17 +21,29 @@ public class SkyTeleOp extends OpMode {
     //As a general rule, use uppercase first letters for hardware mapping,
     //and use lowercase first letters for variables.
     private ElapsedTime runtime = new ElapsedTime();
+    //drive motors
     private DcMotor DriveMotor1 = null; // front right
     private DcMotor DriveMotor2 = null; // front left
     private DcMotor DriveMotor3 = null; // back right
     private DcMotor DriveMotor4 = null;
-   private DcMotor Up= null;// back left
+    // block grabbing motors
+    private DcMotor Up= null;// back left
+    private DcMotor PickUp = null;  // pick up system
+    private DcMotor PickUp2 = null;  // pick up system
+    private DcMotor Lifter = null;
+
+    //servos
+    private Servo Servo1 = null;
+    private Servo Servo2 = null;  //CR
     private Servo ServoA = null;
     private Servo ServoB = null;
-   private DcMotor PickUpMotor = null;  // pick up system
+    private Servo ServoClaw= null;  // CR
+    private Servo ServoFlip= null;
 
     private double Speed = .25;
     private double Soft = 0;
+
+    private boolean Flipout= false;
 
 
     @Override
@@ -44,11 +56,23 @@ public class SkyTeleOp extends OpMode {
         DriveMotor2 = hardwareMap.get(DcMotor.class, "DriveMotor2");
         DriveMotor3 = hardwareMap.get(DcMotor.class, "DriveMotor3");
         DriveMotor4 = hardwareMap.get(DcMotor.class, "DriveMotor4");
-       Up = hardwareMap.get(DcMotor.class, "Up");
+        Up = hardwareMap.get(DcMotor.class, "Up");
+        PickUp = hardwareMap.get(DcMotor.class, "PickUp");
+        PickUp2 = hardwareMap.get(DcMotor.class, "PickUp2");
+         Lifter = hardwareMap.get(DcMotor.class, "Lifter");
+         ServoA = hardwareMap.get(Servo.class, "ServoA");
+         ServoB = hardwareMap.get(Servo.class, "ServoB");
+        ServoClaw= hardwareMap.get(Servo.class, "ServoClaw");
+        ServoFlip= hardwareMap.get(Servo.class, "ServoFlip"); //Formerly ServoL2
+        Servo1= hardwareMap.get(Servo.class, "Servo1");
+        Servo2 = hardwareMap.get(Servo.class, "Servo2");
 
-        ServoA = hardwareMap.get(Servo.class, "ServoA");
-       ServoB = hardwareMap.get(Servo.class, "ServoB");
-      PickUpMotor = hardwareMap.get(DcMotor.class, "PickUpMotor");
+        ServoA.setPosition(.25); // Sets servo grabber open
+        ServoB.setPosition(.5);
+        Servo1.setPosition(.5); // CR servo
+        Servo2.setPosition(.5); //  CR servo
+        ServoClaw.setPosition(.55); // holds claw closed (BRO CR SERVO too)
+        ServoFlip.setPosition(.5);  // CR servo
         telemetry.addData("Status", "Initialized again");
 
 
@@ -71,21 +95,21 @@ public class SkyTeleOp extends OpMode {
         if ((gamepad1.left_stick_y > 0.25) || (gamepad1.left_stick_y < -0.25)) {      //Forward/backwards
             if (Soft < 1) Soft = Soft + 0.02;
             DriveMotor1.setPower(Speed * Soft * gamepad1.left_stick_y);
-            DriveMotor2.setPower(-Speed * Soft * gamepad1.left_stick_y);
-            DriveMotor3.setPower(Speed * Soft * gamepad1.left_stick_y);
+            DriveMotor2.setPower(Speed * Soft * gamepad1.left_stick_y);
+            DriveMotor3.setPower(-Speed * Soft * gamepad1.left_stick_y);
             DriveMotor4.setPower(-Speed * Soft * gamepad1.left_stick_y);
         } else if ((gamepad1.left_stick_x > 0.25) || (gamepad1.left_stick_x < -0.25)) {      // Translation
             if (Soft < 1) Soft = Soft + 0.02;
             DriveMotor1.setPower(Speed * Soft * gamepad1.left_stick_x);
-            DriveMotor2.setPower(Speed * Soft * gamepad1.left_stick_x);
-            DriveMotor3.setPower(-Speed * Soft * gamepad1.left_stick_x);
+            DriveMotor2.setPower(-Speed * Soft * gamepad1.left_stick_x);
+            DriveMotor3.setPower(Speed * Soft * gamepad1.left_stick_x);
             DriveMotor4.setPower(-Speed * Soft * gamepad1.left_stick_x);
         } else if ((gamepad1.right_stick_x > 0.25) || (gamepad1.right_stick_x < -0.25)) {      //turning
-            if (Soft < 1) Soft = Soft + 0.02;
-            DriveMotor1.setPower(-Speed * Soft * gamepad1.right_stick_x);
-            DriveMotor2.setPower(-Speed * Soft * gamepad1.right_stick_x);
-            DriveMotor3.setPower(-Speed * Soft * gamepad1.right_stick_x);
-            DriveMotor4.setPower(-Speed * Soft * gamepad1.right_stick_x);
+           if (Soft < 1) Soft = Soft + 0.02;
+            DriveMotor1.setPower(Speed * Soft * gamepad1.right_stick_x);
+            DriveMotor2.setPower(Speed * Soft * gamepad1.right_stick_x);
+            DriveMotor3.setPower(Speed* Soft * gamepad1.right_stick_x);
+            DriveMotor4.setPower(Speed * Soft * gamepad1.right_stick_x);
         } else {    // 0 set power for the 4 train drive system
             Soft = .1 / Speed;
             DriveMotor1.setPower(0); //DriveMotor1.getPower();
@@ -94,37 +118,82 @@ public class SkyTeleOp extends OpMode {
             DriveMotor4.setPower(0);
 
         }
-        if (gamepad2.y) {      // servo for the pooper scooper
-            // open
-            ServoA.setPosition(0);
-            ServoB.setPosition(1);
+       if (gamepad2.x) {      // servo for block pick up
+            // close
+            ServoA.setPosition(.85);
+            ServoB.setPosition(0);
         }
-        /*
+        if (gamepad2.y) {      // servo for block pick up
+            // open
+            ServoA.setPosition(.25);
+            ServoB.setPosition(.5);
+        }
+
         if (gamepad2.right_stick_y > 0.5) {    //marker servo up and down
-            Up2.setPower(.75);
+            Lifter.setPower(.75);
         } else if (gamepad2.right_stick_y < -0.5) {
-            Up2.setPower(-.75);
+            Lifter.setPower(-.75);
         } else {
-            Speed = 0;
-            Up2.setPower(0);
-        }*/
+            Lifter.setPower(0);
+        }
+        if (gamepad2.dpad_up) {
+           //up
+            Servo1.setPosition(.4);
+        }  else if (gamepad2.dpad_down) {
+           //down
+            Servo1.setPosition(.6);
+        }  else {
+            Servo1.setPosition(.5);
+        }
+        if (gamepad2.dpad_left) {
+            //up
+            Servo2.setPosition(.6);  // CR servo
+        }  else if (gamepad2.dpad_right) {
+           //down
+            Servo2.setPosition(.4);  //CR servo
+        }  else {
+            Servo2.setPosition(.5);
+        }
 
-
+        if (gamepad2.a) {      // cap stone
+            // close
+            ServoClaw.setPosition(1); //yes
+            sleep(50);
+            ServoClaw.setPosition(.55);
+        }
+        if (gamepad2.b) {      // cap stone
+            // open
+            ServoClaw.setPosition(0);//claw CR
+            sleep(50);
+            ServoClaw.setPosition(.45);
+        }
+        if (gamepad2.left_bumper) {            // flip ting on robot CR servo
+           // ServoFlip.setPosition(0);
+            //sleep(50);
+            ServoFlip.setPosition(.45);
+        }  else if (gamepad2.left_trigger > 0){
+            //ServoFlip.setPosition(1);
+            //sleep(50);
+            ServoFlip.setPosition(.55);
+        }  else {
+            ServoFlip.setPosition(.5);
+        }
 
         if (gamepad2.left_stick_x > 0.5) {    //open and close pick up
-            PickUpMotor.setPower(.75);
+            PickUp.setPower(-0.75);
+            PickUp2.setPower(0.75);
         } else if (gamepad2.left_stick_x < -0.5) {
-            PickUpMotor.setPower(-.75);
+            PickUp.setPower(0.75);
+            PickUp2.setPower(-0.75);
         } else {
-            Speed = 0;
-            PickUpMotor.setPower(0);
+            PickUp.setPower(0);
+            PickUp2.setPower(0);
         }
         if (gamepad2.left_stick_y > 0.5) {    //up and down pick up
-            Up.setPower(.75);
+            Up.setPower(-0.75);
         } else if (gamepad2.left_stick_y < -0.5) {
-            Up.setPower(-.75);
+            Up.setPower(0.75);
         } else {
-            Speed = 0;
             Up.setPower(0);
         }
 
