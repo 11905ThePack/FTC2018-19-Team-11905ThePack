@@ -103,7 +103,7 @@ public class SkyAuto4Red extends LinearOpMode {
         telemetry.addData("ConsoleOut", "Finished, Wait for end.");
         telemetry.update();
 
-
+//random comment
         //  telemetry.addData("ConsoleOut", "Finished, end.");
         //telemetry.update();
     }
