@@ -155,13 +155,13 @@ public class SkyTeleOp extends OpMode {
             Servo2.setPosition(.5);
         }
 
-        if (gamepad2.a) {      // cap stone
+        if (gamepad2.b) {      // cap stone
             // close
             ServoClaw.setPosition(1); //yes
             sleep(50);
             ServoClaw.setPosition(.55);
         }
-        if (gamepad2.b) {      // cap stone
+        if (gamepad2.a) {      // cap stone
             // open
             ServoClaw.setPosition(0);//claw CR
             sleep(50);

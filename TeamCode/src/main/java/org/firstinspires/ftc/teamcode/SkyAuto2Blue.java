@@ -59,6 +59,8 @@ public class SkyAuto2Blue extends LinearOpMode {
     DcMotor DriveMotor4;
 
     Servo Servo1;
+    Servo ServoFlip;
+    Servo ServoClaw;
     Servo Servo2;
 
     //Colour Sensors
@@ -83,10 +85,17 @@ public class SkyAuto2Blue extends LinearOpMode {
         DriveMotor3 = hardwareMap.get(DcMotor.class, "DriveMotor3");
         DriveMotor4 = hardwareMap.get(DcMotor.class, "DriveMotor4");
 
-
+        ServoClaw= hardwareMap.get(Servo.class, "ServoClaw");
         Servo1 = hardwareMap.get(Servo.class, "Servo1");
         Servo2 = hardwareMap.get(Servo.class, "Servo2");
+        ServoFlip = hardwareMap.get(Servo.class, "ServoFlip");
 
+        //ServoA.setPosition(.75); // Sets servo grabber open
+        //ServoB.setPosition(0);
+        Servo1.setPosition(.5); // CR servo
+        Servo2.setPosition(.5); //  CR servo
+        ServoClaw.setPosition(.55); // holds claw closed (BRO CR SERVO too)
+        ServoFlip.setPosition(.5);  // CR servo
         telemetry.update();
 
         //Wait for Start Button to Be Pressed
@@ -96,12 +105,13 @@ public class SkyAuto2Blue extends LinearOpMode {
 
         if (opModeIsActive()) {   //drive around;
 
-            Drive(.1,48,10);
-            Turn (.1, 90, 10);
-            Servo1.setPosition(1);
-            Servo2.setPosition(.5);
-            Turn (.1, 90, 10);
-            Drive(-.1,-28,5);
+            Drive(-.15,-35,5);
+            Turn (-.15, -90, 5);
+            Servo1.setPosition(.6);
+            Translation(.15,38,5);
+            Servo1.setPosition(.4);
+            ServoFlip.setPosition(.6);
+            Drive(.15,20,5);
         }
 
 
@@ -148,16 +158,16 @@ public class SkyAuto2Blue extends LinearOpMode {
         DriveMotor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
            ticks= (int) (inches * COUNTS_PER_INCH);
-        DriveMotor1.setTargetPosition(-ticks);
+        DriveMotor1.setTargetPosition(ticks);
         DriveMotor2.setTargetPosition(ticks);
         DriveMotor3.setTargetPosition(-ticks);
-        DriveMotor4.setTargetPosition(ticks);
+        DriveMotor4.setTargetPosition(-ticks);
 
         runtime.reset();
 
         DriveMotor1.setPower(speed);
-        DriveMotor2.setPower(-speed);
-        DriveMotor3.setPower(speed);
+        DriveMotor2.setPower(speed);
+        DriveMotor3.setPower(-speed);
         DriveMotor4.setPower(-speed);
 
 
@@ -254,7 +264,7 @@ public class SkyAuto2Blue extends LinearOpMode {
         DriveMotor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         DriveMotor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-             ticks= (int) (degrees * COUNTS_PER_INCH * 17.6/90);
+             ticks= (int) (degrees * COUNTS_PER_INCH * 11/90);
         DriveMotor1.setTargetPosition(ticks);
         DriveMotor2.setTargetPosition(ticks);
         DriveMotor3.setTargetPosition(ticks);
@@ -360,10 +370,10 @@ public class SkyAuto2Blue extends LinearOpMode {
         DriveMotor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         ticks= (int) (inches * COUNTS_PER_INCH);
-        DriveMotor1.setTargetPosition(-ticks);
+        DriveMotor1.setTargetPosition(ticks);
         DriveMotor2.setTargetPosition(-ticks);
         DriveMotor3.setTargetPosition(ticks);
-        DriveMotor4.setTargetPosition(ticks);
+        DriveMotor4.setTargetPosition(-ticks);
 
         runtime.reset();
 

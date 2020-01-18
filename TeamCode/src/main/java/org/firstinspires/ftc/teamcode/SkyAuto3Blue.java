@@ -60,6 +60,9 @@ public class SkyAuto3Blue extends LinearOpMode {
 
     Servo Servo1;
     Servo Servo2;
+    Servo ServoFlip;
+    Servo ServoClaw;
+
     ColorSensor color_sensor;
 
     //Colour Sensors
@@ -77,17 +80,25 @@ public class SkyAuto3Blue extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
+     int Block = 0;
         //Motors
         DriveMotor1 = hardwareMap.get(DcMotor.class, "DriveMotor1");
         DriveMotor2 = hardwareMap.get(DcMotor.class, "DriveMotor2");
         DriveMotor3 = hardwareMap.get(DcMotor.class, "DriveMotor3");
         DriveMotor4 = hardwareMap.get(DcMotor.class, "DriveMotor4");
-
         Servo1 = hardwareMap.get(Servo.class, "Servo1");
         Servo2 = hardwareMap.get(Servo.class, "Servo2");
+        ServoClaw = hardwareMap.get(Servo.class, "ServoClaw");
+        ServoFlip = hardwareMap.get(Servo.class, "ServoFlip");
 
         color_sensor = hardwareMap.colorSensor.get("color_sensor");
+
+       // ServoA.setPosition(.75); // Sets servo grabber open
+       // ServoB.setPosition(0);
+        Servo1.setPosition(.5); // CR servo
+        Servo2.setPosition(.5); //  CR servo
+        ServoClaw.setPosition(.55); // holds claw closed (BRO CR SERVO too)
+        ServoFlip.setPosition(.5);  // CR servo
 
         telemetry.update();
 
@@ -97,15 +108,32 @@ public class SkyAuto3Blue extends LinearOpMode {
 
 
         if (opModeIsActive()) {   //drive around;
-
-            if( Yellow()){
-                Servo1.setPosition(1);
-                Servo2.setPosition(.5);
-                if( Yellow()){
+           Turn(.15,90,5);
+           Drive(-.15,-30,5);
+           Turn(-.15,-90,5);
+           Drive(-.15,-23,5);
+            telemetry.addData("ConsoleOut", "Drove to first block.");
+            telemetry.update();
+           sleep(2500);
+              if( Yellow()) {
+              Translation(.15,5,5);
+              Block++;
+              if ( Yellow()){
+                  Translation(.15,5,5);
+                  Block++;
+              }
+            }  // not yellow, hope its a skystone
+                    Servo1.setPosition(.6);
+                    ServoFlip.setPosition(.6);
+                    Drive(.15,5,5);
+                    Turn(-.15,-90,5);
+                    Drive(-.15,-50-(5*Block),5);
+                    Servo1.setPosition(.4);
+                    Drive(.15,10,5);
 
                     // drive to last block
-                }
-            }
+
+
         }
 
 
@@ -151,20 +179,20 @@ public class SkyAuto3Blue extends LinearOpMode {
         DriveMotor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         ticks= (int) (inches * COUNTS_PER_INCH);
-        DriveMotor1.setTargetPosition(-ticks);
+        DriveMotor1.setTargetPosition(ticks);
         DriveMotor2.setTargetPosition(ticks);
         DriveMotor3.setTargetPosition(-ticks);
-        DriveMotor4.setTargetPosition(ticks);
+        DriveMotor4.setTargetPosition(-ticks);
 
         runtime.reset();
 
         DriveMotor1.setPower(speed);
-        DriveMotor2.setPower(-speed);
-        DriveMotor3.setPower(speed);
+        DriveMotor2.setPower(speed);
+        DriveMotor3.setPower(-speed);
         DriveMotor4.setPower(-speed);
 
 
-       /* while (opModeIsActive()
+        while (opModeIsActive()
                 && (DriveTimer.seconds() < drivetime)
                 && (Motor1 || Motor2 || Motor3 || Motor4 )
                 && (total_eTime.time() < 30)) {
@@ -192,7 +220,7 @@ public class SkyAuto3Blue extends LinearOpMode {
             //      DriveMotor1.getCurrentPosition(),
             //    DriveMotor2.getCurrentPosition());
             //   telemetry.update();
-        }*/
+        }
        // DriveMotor1.setPower(0);
        // DriveMotor2.setPower(0);
        // DriveMotor3.setPower(0);
@@ -256,7 +284,7 @@ public class SkyAuto3Blue extends LinearOpMode {
         DriveMotor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         DriveMotor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        ticks= (int) (degrees * COUNTS_PER_INCH * 17.6/90);
+        ticks= (int) (degrees * COUNTS_PER_INCH * 11/90);
         DriveMotor1.setTargetPosition(ticks);
         DriveMotor2.setTargetPosition(ticks);
         DriveMotor3.setTargetPosition(ticks);
@@ -369,10 +397,10 @@ public class SkyAuto3Blue extends LinearOpMode {
 
         runtime.reset();
 
-        DriveMotor1.setPower(-speed);
+        DriveMotor1.setPower(speed);
         DriveMotor2.setPower(-speed);
         DriveMotor3.setPower(speed);
-        DriveMotor4.setPower(speed);
+        DriveMotor4.setPower(-speed);
 
 
         while (opModeIsActive()
