@@ -44,7 +44,7 @@ public class SkyTeleOp extends OpMode {
     private double Soft = 0;
 
     private boolean Flipout= false;
-
+   // saira 1/18 11:00 am
 
     @Override
     public void init() {
@@ -67,8 +67,8 @@ public class SkyTeleOp extends OpMode {
         Servo1= hardwareMap.get(Servo.class, "Servo1");
         Servo2 = hardwareMap.get(Servo.class, "Servo2");
 
-        ServoA.setPosition(.25); // Sets servo grabber open
-        ServoB.setPosition(.5);
+        ServoA.setPosition(.75); // Sets servo grabber open
+        ServoB.setPosition(0);
         Servo1.setPosition(.5); // CR servo
         Servo2.setPosition(.5); //  CR servo
         ServoClaw.setPosition(.55); // holds claw closed (BRO CR SERVO too)
@@ -94,10 +94,10 @@ public class SkyTeleOp extends OpMode {
 
         if ((gamepad1.left_stick_y > 0.25) || (gamepad1.left_stick_y < -0.25)) {      //Forward/backwards
             if (Soft < 1) Soft = Soft + 0.02;
-            DriveMotor1.setPower(Speed * Soft * gamepad1.left_stick_y);
-            DriveMotor2.setPower(Speed * Soft * gamepad1.left_stick_y);
-            DriveMotor3.setPower(-Speed * Soft * gamepad1.left_stick_y);
-            DriveMotor4.setPower(-Speed * Soft * gamepad1.left_stick_y);
+            DriveMotor1.setPower(-Speed * Soft * gamepad1.left_stick_y);
+            DriveMotor2.setPower(-Speed * Soft * gamepad1.left_stick_y);
+            DriveMotor3.setPower(Speed * Soft * gamepad1.left_stick_y);
+            DriveMotor4.setPower(Speed * Soft * gamepad1.left_stick_y);
         } else if ((gamepad1.left_stick_x > 0.25) || (gamepad1.left_stick_x < -0.25)) {      // Translation
             if (Soft < 1) Soft = Soft + 0.02;
             DriveMotor1.setPower(Speed * Soft * gamepad1.left_stick_x);
@@ -119,14 +119,14 @@ public class SkyTeleOp extends OpMode {
 
         }
        if (gamepad2.x) {      // servo for block pick up
-            // close
-            ServoA.setPosition(.85);
+            // down
+            ServoA.setPosition(.75);
             ServoB.setPosition(0);
         }
         if (gamepad2.y) {      // servo for block pick up
-            // open
-            ServoA.setPosition(.25);
-            ServoB.setPosition(.5);
+            // up
+            ServoA.setPosition(.2);
+            ServoB.setPosition(.55);
         }
 
         if (gamepad2.right_stick_y > 0.5) {    //marker servo up and down
@@ -170,11 +170,11 @@ public class SkyTeleOp extends OpMode {
         if (gamepad2.left_bumper) {            // flip ting on robot CR servo
            // ServoFlip.setPosition(0);
             //sleep(50);
-            ServoFlip.setPosition(.45);
+            ServoFlip.setPosition(.4);
         }  else if (gamepad2.left_trigger > 0){
             //ServoFlip.setPosition(1);
             //sleep(50);
-            ServoFlip.setPosition(.55);
+            ServoFlip.setPosition(.6);
         }  else {
             ServoFlip.setPosition(.5);
         }
