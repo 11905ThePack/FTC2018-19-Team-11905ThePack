@@ -84,6 +84,7 @@ public class SkyAuto4Red extends LinearOpMode {
         Servo2 = hardwareMap.get(Servo.class, "Servo2");
 
         telemetry.update();
+        //boo
 
         //Wait for Start Button to Be Pressed
         waitForStart();
