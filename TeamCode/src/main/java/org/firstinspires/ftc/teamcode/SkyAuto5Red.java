@@ -237,6 +237,7 @@ public class SkyAuto5Red extends LinearOpMode {
             telemetry.addData("ConsoleOut", "emergency stopped.");
         }
         telemetry.update();
+        //boo2
 
         //Turn off RUN_TO_POSITION
 
