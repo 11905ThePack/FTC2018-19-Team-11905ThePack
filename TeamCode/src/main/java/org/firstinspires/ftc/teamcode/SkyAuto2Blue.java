@@ -75,7 +75,7 @@ public class SkyAuto2Blue extends LinearOpMode {
     static final double COUNTS_PER_DEGREE =
             (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) * 1.8 / 90;
 
-
+//boo
     @Override
     public void runOpMode() {
 
